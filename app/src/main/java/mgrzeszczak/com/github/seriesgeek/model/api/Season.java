@@ -1,4 +1,4 @@
-package mgrzeszczak.com.github.seriesgeek.model;
+package mgrzeszczak.com.github.seriesgeek.model.api;
 
 import com.google.gson.annotations.SerializedName;
 

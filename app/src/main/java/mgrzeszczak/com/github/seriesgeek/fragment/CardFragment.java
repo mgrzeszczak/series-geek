@@ -5,12 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -20,8 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
-import mgrzeszczak.com.github.seriesgeek.model.Series;
-import mgrzeszczak.com.github.seriesgeek.model.SeriesSearchEntity;
+import mgrzeszczak.com.github.seriesgeek.model.api.Series;
+import mgrzeszczak.com.github.seriesgeek.model.api.SeriesSearchEntity;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.LogService;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.SeriesListAdapter;
@@ -52,6 +50,13 @@ public class CardFragment extends Fragment {
         b.putInt(ARG_POSITION, position);
         f.setArguments(b);
         return f;
+    }
+
+    public void search(String query){
+        apiService.searchSeries(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result->{
+            seriesListAdapter.clear();
+            for (SeriesSearchEntity entity : result) seriesListAdapter.add(entity.getSeries());
+        });
     }
 
     @Override

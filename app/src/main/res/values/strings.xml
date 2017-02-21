@@ -2,4 +2,9 @@
     <string name="app_name">Series Geek</string>
     <string name="facebook_app_id">150520695462228</string>
     <string name="fb_login_protocol_scheme">fb150520695462228</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_logout">Log out</string>
+
+
 </resources>

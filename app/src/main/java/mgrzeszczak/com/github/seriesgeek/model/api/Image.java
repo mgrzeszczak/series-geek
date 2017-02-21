@@ -1,4 +1,4 @@
-package mgrzeszczak.com.github.seriesgeek.model;
+package mgrzeszczak.com.github.seriesgeek.model.api;
 
 /**
  * Created by Maciej on 21.02.2017.

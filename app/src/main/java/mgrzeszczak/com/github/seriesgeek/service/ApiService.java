@@ -2,10 +2,10 @@ package mgrzeszczak.com.github.seriesgeek.service;
 
 import java.util.List;
 
-import mgrzeszczak.com.github.seriesgeek.model.Episode;
-import mgrzeszczak.com.github.seriesgeek.model.Season;
-import mgrzeszczak.com.github.seriesgeek.model.Series;
-import mgrzeszczak.com.github.seriesgeek.model.SeriesSearchEntity;
+import mgrzeszczak.com.github.seriesgeek.model.api.Episode;
+import mgrzeszczak.com.github.seriesgeek.model.api.Season;
+import mgrzeszczak.com.github.seriesgeek.model.api.Series;
+import mgrzeszczak.com.github.seriesgeek.model.api.SeriesSearchEntity;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;

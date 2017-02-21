@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
-import mgrzeszczak.com.github.seriesgeek.model.Series;
+import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 import mgrzeszczak.com.github.seriesgeek.service.LogService;
 import rx.Observable;
 import rx.subjects.PublishSubject;
@@ -52,6 +52,12 @@ public class SeriesListAdapter extends RecyclerView.Adapter<SeriesListAdapter.Vi
         notifyItemInserted(items.size()-1);
     }
 
+    public void clear(){
+        int size = items.size();
+        items.clear();
+        notifyItemRangeRemoved(0,size);
+    }
+
     public void remove(Series item) {
         int position = items.indexOf(item);
         items.remove(position);
@@ -68,7 +74,8 @@ public class SeriesListAdapter extends RecyclerView.Adapter<SeriesListAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Series item = items.get(position);
         holder.name.setText(item.getName());
-        Picasso.with(holder.poster.getContext()).load(item.getImage().getMedium()).into(holder.poster);
+        if (item.getImage()!=null && item.getImage().getMedium()!=null)
+            Picasso.with(holder.poster.getContext()).load(item.getImage().getMedium()).into(holder.poster);
         holder.itemView.setTag(item);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
