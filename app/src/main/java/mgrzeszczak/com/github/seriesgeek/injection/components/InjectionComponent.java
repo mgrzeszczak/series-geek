@@ -8,6 +8,8 @@ import mgrzeszczak.com.github.seriesgeek.activity.MainActivity;
 import mgrzeszczak.com.github.seriesgeek.activity.SeasonActivity;
 import mgrzeszczak.com.github.seriesgeek.activity.SeriesActivity;
 import mgrzeszczak.com.github.seriesgeek.fragment.CardFragment;
+import mgrzeszczak.com.github.seriesgeek.fragment.SearchFragment;
+import mgrzeszczak.com.github.seriesgeek.fragment.SeriesFragment;
 import mgrzeszczak.com.github.seriesgeek.model.api.Episode;
 
 /**
@@ -20,7 +22,8 @@ public interface InjectionComponent {
     void inject(BaseActivity activity);
     void inject(SeriesActivity activity);
     void inject(LoginActivity activity);
-    void inject(CardFragment cardFragment);
+    void inject(SeriesFragment cardFragment);
+    void inject(SearchFragment cardFragment);
     void inject(SeasonActivity seasonActivity);
     void inject(EpisodeActivity episodeActivity);
 

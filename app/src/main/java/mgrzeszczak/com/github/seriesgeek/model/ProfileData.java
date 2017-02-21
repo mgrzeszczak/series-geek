@@ -11,7 +11,7 @@ import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 public class ProfileData {
 
     private String id;
-    private List<Series> savedShows;
+    private List<Integer> savedShows;
 
     public ProfileData(String id) {
         this.id = id;
@@ -26,11 +26,11 @@ public class ProfileData {
         this.id = id;
     }
 
-    public List<Series> getSavedShows() {
+    public List<Integer> getSavedShows() {
         return savedShows;
     }
 
-    public void setSavedShows(List<Series> savedShows) {
+    public void setSavedShows(List<Integer> savedShows) {
         this.savedShows = savedShows;
     }
 }

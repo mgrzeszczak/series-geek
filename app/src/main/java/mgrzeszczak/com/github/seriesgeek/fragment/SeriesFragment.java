@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -25,20 +28,23 @@ import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.LogService;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.SeriesViewHolder;
+import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Maciej on 21.02.2017.
  */
-public class CardFragment extends Fragment {
+public class SeriesFragment extends Fragment {
 
     private static final String ARG_POSITION = "position";
     private ObjectListAdapter<Series> seriesListAdapter;
+    private final PublishSubject<Void> updateSubject = PublishSubject.create();
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-
     @Inject
     ApiService apiService;
     @Inject
@@ -46,27 +52,29 @@ public class CardFragment extends Fragment {
 
     private int position;
 
-    public static CardFragment newInstance(int position) {
-        CardFragment f = new CardFragment();
+    public static SeriesFragment newInstance(int position) {
+        SeriesFragment f = new SeriesFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         f.setArguments(b);
         return f;
     }
 
-    public void search(String query){
-        apiService.searchSeries(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result->{
-            seriesListAdapter.clear();
-            for (SeriesSearchEntity entity : result) seriesListAdapter.add(entity.getSeries());
-        });
-    }
+    private List<Subscription> subscriptions = new ArrayList<>();
+    private final Object lock = new Object();
 
     public void update(ProfileData profileData){
-        seriesListAdapter.clear();
-        for (Integer id: profileData.getSavedShows()){
-            apiService.getSeriesInfo(id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result-> {
-                seriesListAdapter.add(result);
-            });
+        synchronized(lock){
+            if (seriesListAdapter!=null){
+                for (Subscription s : subscriptions) if (!s.isUnsubscribed()) s.unsubscribe();
+                seriesListAdapter.clear();
+                for (Integer id: profileData.getSavedShows()){
+                    Subscription subscribe = apiService.getSeriesInfo(id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
+                        seriesListAdapter.add(result);
+                    });
+                    subscriptions.add(subscribe);
+                }
+            }
         }
     }
 
@@ -78,7 +86,11 @@ public class CardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         position = getArguments().getInt(ARG_POSITION);
-        //Injector.INSTANCE.getApplicationComponent().inject(this);
+        Injector.INSTANCE.getApplicationComponent().inject(this);
+    }
+
+    public Observable<Void> updateEvent(){
+        return updateSubject.asObservable();
     }
 
     @Override
@@ -88,9 +100,8 @@ public class CardFragment extends Fragment {
         ViewCompat.setElevation(rootView, 50);
 
         recyclerView.setHasFixedSize(true);
-        seriesListAdapter = new ObjectListAdapter<>(R.layout.item_series,SeriesViewHolder::new);
+        seriesListAdapter = new ObjectListAdapter<>(R.layout.item_series, SeriesViewHolder::new);
         recyclerView.setAdapter(seriesListAdapter);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -99,13 +110,9 @@ public class CardFragment extends Fragment {
             intent.putExtra(getString(R.string.show_id),s.getId());
             getActivity().startActivity(intent);
         });
-        /*
-        apiService.searchSeries("flash").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result->{
-            for (SeriesSearchEntity entity : result) seriesListAdapter.add(entity.getSeries());
-        });*/
 
+        updateSubject.onNext(null);
         return rootView;
     }
+
 }
-
-

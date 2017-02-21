@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.facebook.Profile;
 
 import javax.inject.Inject;
 
@@ -22,8 +23,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
 import mgrzeszczak.com.github.seriesgeek.fragment.CardFragment;
+import mgrzeszczak.com.github.seriesgeek.fragment.SearchFragment;
+import mgrzeszczak.com.github.seriesgeek.fragment.SeriesFragment;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
+import mgrzeszczak.com.github.seriesgeek.model.ProfileData;
+import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
+import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
@@ -33,9 +41,12 @@ public class MainActivity extends BaseActivity {
     ViewPager pager;
     @Inject
     ApiService apiService;
+    @Inject
+    ProfileService profileService;
 
-    private CardFragment myShowsFragment;
-    private CardFragment searchFragment;
+    private ProfileData profileData;
+    private SeriesFragment myShowsFragment;
+    private SearchFragment searchFragment;
     private MyPagerAdapter pagerAdapter;
 
     @Override
@@ -49,11 +60,13 @@ public class MainActivity extends BaseActivity {
 
     private void init(){
         tabs.setTextColor(R.color.colorPrimary);
-        myShowsFragment = CardFragment.newInstance(0);
-        searchFragment = CardFragment.newInstance(1);
+        myShowsFragment = SeriesFragment.newInstance(0);
+        searchFragment = SearchFragment.newInstance(1);
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         tabs.setViewPager(pager);
+        profileData = profileService.get(Profile.getCurrentProfile().getId());
+        myShowsFragment.updateEvent().subscribe((v)->myShowsFragment.update(profileData));
     }
 
     @Override
@@ -71,8 +84,9 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 logService.log(query);
+                searchView.post(() -> searchView.clearFocus());
                 pager.setCurrentItem(1,true);
-                pagerAdapter.currentFragment.search(query);
+                searchFragment.search(query);
                 return true;
             }
 
@@ -104,9 +118,6 @@ public class MainActivity extends BaseActivity {
 
         private final String[] TITLES = {"Your shows","Search"};
 
-        private int position;
-        private CardFragment currentFragment;
-
         MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -123,7 +134,6 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            this.position = position;
             if (position == 0) return myShowsFragment;
             else return searchFragment;
         }
@@ -131,11 +141,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
             super.setPrimaryItem(container, position, object);
-            this.currentFragment = (CardFragment) object;
+            if (object == myShowsFragment) myShowsFragment.update(profileData);
         }
-
-
     }
-
-
 }
