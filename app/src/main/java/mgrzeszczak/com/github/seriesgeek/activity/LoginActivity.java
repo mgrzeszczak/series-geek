@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,6 +17,7 @@ import mgrzeszczak.com.github.seriesgeek.model.ProfileData;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
 import mgrzeszczak.com.github.seriesgeek.util.PermissionVerifier;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -32,8 +34,7 @@ import javax.inject.Inject;
  */
 public class LoginActivity extends BaseActivity {
 
-    CallbackManager callbackManager;
-
+    private CallbackManager callbackManager;
     @Inject
     ProfileService profileService;
     @BindView(R.id.login_button)
@@ -45,23 +46,45 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         Injector.INSTANCE.getApplicationComponent().inject(this);
-        PermissionVerifier.verifyStoragePermissions(this);
-
-        if (Profile.getCurrentProfile()!=null){
-            Profile currentProfile = Profile.getCurrentProfile();
-            //profileService.loadFromFile();
-            //ProfileData data = profileService.get(currentProfile.getId());
-            //if (data == null) {
-            //    profileService.save(new ProfileData(currentProfile.getId()));
-            //}
-            logService.log("Hello "+currentProfile.getFirstName()+" "+currentProfile.getLastName());
-            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-            LoginActivity.this.startActivity(intent);
-        } else
-            init();
     }
 
-    private void init(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (AccessToken.getCurrentAccessToken()!=null) {
+            checkStoragePermissionsAndRun();
+        } else login();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    private void loadSettings(Profile profile){
+        profileService.loadFromFile();
+        ProfileData data = profileService.get(profile.getId());
+        if (data == null) {
+            profileService.save(new ProfileData(profile.getId()));
+        }
+    }
+
+    private void run(){
+        Profile currentProfile = Profile.getCurrentProfile();
+        Toast.makeText(this,"Hello "+currentProfile.getFirstName()+" "+currentProfile.getLastName(),Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+        LoginActivity.this.startActivity(intent);
+        finish();
+    }
+
+    private void checkStoragePermissionsAndRun(){
+        if (PermissionVerifier.verifyStoragePermissions(this)) {
+            loadSettings(Profile.getCurrentProfile());
+            run();
+        }
+    }
+
+    private void login(){
         callbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -70,9 +93,6 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
                         this.stopTracking();
-                        logService.log(currentProfile.getFirstName()+" "+currentProfile.getLastName());
-                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                        LoginActivity.this.startActivity(intent);
                     }
                 };
                 profileTracker.startTracking();
@@ -80,14 +100,14 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
-
             }
 
             @Override
             public void onError(FacebookException error) {
-
+                Toast.makeText(LoginActivity.this,"Failed to login to facebook.",Toast.LENGTH_SHORT).show();
             }
         });
+        loginButton.callOnClick();
     }
 
     @Override
@@ -100,24 +120,17 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-
         switch (requestCode) {
             case PermissionVerifier.REQUEST_EXTERNAL_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-
-
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    loadSettings(Profile.getCurrentProfile());
+                    run();
                 } else {
                     logService.log("NOT ALLOWED");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    run();
                 }
-                return;
             }
         }
     }

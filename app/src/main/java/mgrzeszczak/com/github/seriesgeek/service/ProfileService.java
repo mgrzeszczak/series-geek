@@ -5,12 +5,16 @@ import android.os.Environment;
 import com.facebook.Profile;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,7 @@ public class ProfileService {
 
     private Gson gson;
     private Map<String,ProfileData> profiles;
+    private final static int BUFFER_SIZE = 1024;
     private static final String FILENAME = Environment.getExternalStorageDirectory().getAbsolutePath()+"/series_geek_file";
 
     public ProfileService(Gson gson) {
@@ -45,17 +50,29 @@ public class ProfileService {
     public void loadFromFile() {
         Data data = null;
         try {
-            data = gson.fromJson(new FileReader(FILENAME), Data.class);
+            InputStream is  = new FileInputStream(FILENAME);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int read = 0;
+            byte[] bytes = new byte[BUFFER_SIZE];
+            while ((read=is.read(bytes,0,BUFFER_SIZE))>0){
+                baos.write(bytes,0,read);
+            }
+            String json = baos.toString("UTF-8");
+            data = gson.fromJson(json, Data.class);
             if (data == null) return;
             profiles = data.getProfiles();
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             profiles = new HashMap<>();
         }
     }
 
     private void saveToFile(){
         try {
-            gson.toJson(new Data(profiles), new FileWriter(FILENAME));
+            String s = gson.toJson(new Data(profiles));
+            FileOutputStream fos = new FileOutputStream(FILENAME);
+            fos.write(s.getBytes());
+            fos.flush();
+            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

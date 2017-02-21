@@ -18,8 +18,9 @@ public class Series {
     private String status;
     @SerializedName("_links")
     private Links links;
+    private Externals externals;
 
-    public Series(int id, List<String> genres, Image image, String name, String summary, int runtime, String status, Links links) {
+    public Series(int id, List<String> genres, Image image, String name, String summary, int runtime, String status, Links links, Externals externals) {
         this.id = id;
         this.genres = genres;
         this.image = image;
@@ -28,6 +29,7 @@ public class Series {
         this.runtime = runtime;
         this.status = status;
         this.links = links;
+        this.externals = externals;
     }
 
     public int getId() {
@@ -92,6 +94,14 @@ public class Series {
 
     public void setLinks(Links links) {
         this.links = links;
+    }
+
+    public Externals getExternals() {
+        return externals;
+    }
+
+    public void setExternals(Externals externals) {
+        this.externals = externals;
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -33,6 +34,8 @@ public class MainActivity extends BaseActivity {
     @Inject
     ApiService apiService;
 
+    private CardFragment myShowsFragment;
+    private CardFragment searchFragment;
     private MyPagerAdapter pagerAdapter;
 
     @Override
@@ -41,6 +44,13 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Injector.INSTANCE.getApplicationComponent().inject(this);
+        init();
+    }
+
+    private void init(){
+        tabs.setTextColor(R.color.colorPrimary);
+        myShowsFragment = CardFragment.newInstance(0);
+        searchFragment = CardFragment.newInstance(1);
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         tabs.setViewPager(pager);
@@ -61,18 +71,19 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 logService.log(query);
+                pager.setCurrentItem(1,true);
                 pagerAdapter.currentFragment.search(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                counter++;
+                /*counter++;
                 if (counter>=3){
                     counter = 0;
                     logService.log(newText);
                     pagerAdapter.currentFragment.search(newText);
-                }
+                }*/
                 return true;
             }
         });
@@ -91,7 +102,7 @@ public class MainActivity extends BaseActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = {"Your shows","Shows","Settings"};
+        private final String[] TITLES = {"Your shows","Search"};
 
         private int position;
         private CardFragment currentFragment;
@@ -113,7 +124,8 @@ public class MainActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             this.position = position;
-            return CardFragment.newInstance(position);
+            if (position == 0) return myShowsFragment;
+            else return searchFragment;
         }
 
         @Override
@@ -121,6 +133,8 @@ public class MainActivity extends BaseActivity {
             super.setPrimaryItem(container, position, object);
             this.currentFragment = (CardFragment) object;
         }
+
+
     }
 
 

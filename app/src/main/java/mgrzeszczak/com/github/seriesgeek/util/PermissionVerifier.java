@@ -35,6 +35,7 @@ public class PermissionVerifier {
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
             );
+            return false;
         }
         return true;
     }

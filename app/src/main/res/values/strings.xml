@@ -5,6 +5,10 @@
     <string name="action_settings">Settings</string>
     <string name="menu_search">Search</string>
     <string name="menu_logout">Log out</string>
+    <string name="show_id">show_id</string>
+    <string name="imdb_id">imdb_id</string>
+    <string name="season_id">season_id</string>
+    <string name="episode_id">episode_is</string>
 
 
 </resources>

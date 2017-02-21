@@ -18,8 +18,11 @@ public interface ApiService {
 
     String ENDPOINT = "http://api.tvmaze.com/";
 
-    @GET("lookup/shows")
-    Observable<Series> getSeriesInfo(@Query("imdb") String imdb);
+    @GET("shows/{id}")
+    Observable<Series> getSeriesInfo(@Path("id") int id);
+
+    @GET("seasons/{id}")
+    Observable<Season> getSeasonInfo(@Path("id") int id);
 
     @GET("search/shows")
     Observable<List<SeriesSearchEntity>> searchSeries(@Query("q") String query);
@@ -27,8 +30,9 @@ public interface ApiService {
     @GET("shows/{id}/episodes")
     Observable<List<Episode>> getEpisodes(@Path("id") int showId);
 
-    @GET("shows/{id}/episodebynumber")
-    Observable<Episode> getEpisode(@Path("id") int showId, @Query("season") int season, @Query("number") int number);
+    //@GET("shows/{id}/episodebynumber")
+    @GET("episodes/{id}")
+    Observable<Episode> getEpisode(@Path("id") int id);
 
     @GET("shows/{id}/seasons")
     Observable<List<Season>> getSeasons(@Path("id") int showId);

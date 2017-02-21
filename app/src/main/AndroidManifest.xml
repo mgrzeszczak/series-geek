@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="mgrzeszczak.com.github.seriesgeek">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -27,7 +28,21 @@
         </activity>
         <activity android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.SeriesActivity"
+            android:screenOrientation="portrait"
 
+            >
+        </activity>
+        <activity android:name=".activity.SeasonActivity"
+            android:screenOrientation="portrait"
+
+            >
+        </activity>
+        <activity android:name=".activity.EpisodeActivity"
+            android:screenOrientation="portrait"
+
+            >
         </activity>
         <activity
             android:name="com.facebook.CustomTabActivity"

@@ -1,5 +1,6 @@
 package mgrzeszczak.com.github.seriesgeek.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -10,19 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
+import mgrzeszczak.com.github.seriesgeek.activity.SeriesActivity;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 import mgrzeszczak.com.github.seriesgeek.model.api.SeriesSearchEntity;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.LogService;
-import mgrzeszczak.com.github.seriesgeek.view.adapter.SeriesListAdapter;
+import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
+import mgrzeszczak.com.github.seriesgeek.view.holders.SeriesViewHolder;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -32,8 +33,8 @@ import rx.schedulers.Schedulers;
 public class CardFragment extends Fragment {
 
     private static final String ARG_POSITION = "position";
+    private ObjectListAdapter<Series> seriesListAdapter;
 
-    private SeriesListAdapter seriesListAdapter;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -73,19 +74,21 @@ public class CardFragment extends Fragment {
         ViewCompat.setElevation(rootView, 50);
 
         recyclerView.setHasFixedSize(true);
-        seriesListAdapter = new SeriesListAdapter(new ArrayList<Series>(), R.layout.item_series);
+        seriesListAdapter = new ObjectListAdapter<>(R.layout.item_series,SeriesViewHolder::new);
         recyclerView.setAdapter(seriesListAdapter);
         //recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         seriesListAdapter.getPositionClicks().subscribe(s->{
-            logService.log(s.toString());
+            Intent intent = new Intent(getActivity(),SeriesActivity.class);
+            intent.putExtra(getString(R.string.show_id),s.getId());
+            getActivity().startActivity(intent);
         });
-
+        /*
         apiService.searchSeries("flash").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result->{
             for (SeriesSearchEntity entity : result) seriesListAdapter.add(entity.getSeries());
-        });
+        });*/
 
         return rootView;
     }
