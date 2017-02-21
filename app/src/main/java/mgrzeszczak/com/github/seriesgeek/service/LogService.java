@@ -22,7 +22,7 @@ public class LogService {
     }
 
     public void log(String message,int duration){
-        Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
         Log.d(tag,message);
     }
 
