@@ -10,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.facebook.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,9 @@ import mgrzeszczak.com.github.seriesgeek.activity.SeriesActivity;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.ProfileData;
 import mgrzeszczak.com.github.seriesgeek.model.api.Series;
-import mgrzeszczak.com.github.seriesgeek.model.api.SeriesSearchEntity;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.LogService;
+import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.SeriesViewHolder;
 import rx.Observable;
@@ -49,6 +52,8 @@ public class SeriesFragment extends Fragment {
     ApiService apiService;
     @Inject
     LogService logService;
+    @Inject
+    ProfileService profileService;
 
     private int position;
 
@@ -105,10 +110,19 @@ public class SeriesFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        seriesListAdapter.getPositionClicks().subscribe(s->{
+        seriesListAdapter.onClick().subscribe(s->{
             Intent intent = new Intent(getActivity(),SeriesActivity.class);
             intent.putExtra(getString(R.string.show_id),s.getId());
             getActivity().startActivity(intent);
+        });
+
+        seriesListAdapter.onLongClick().subscribe(s->{
+            ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
+            if (profileData.getSavedShows().contains(s.getId()))
+            profileData.getSavedShows().remove(s.getId());
+            profileService.save(profileData);
+            seriesListAdapter.remove(s);
+            Toast.makeText(getContext(),s.getName()+" removed from collection.",Toast.LENGTH_SHORT).show();
         });
 
         updateSubject.onNext(null);

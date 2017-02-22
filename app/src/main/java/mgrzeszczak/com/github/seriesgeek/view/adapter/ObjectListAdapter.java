@@ -19,6 +19,7 @@ public class ObjectListAdapter<T> extends RecyclerView.Adapter<BaseHolder<T>> {
     private List<T> items;
     private int itemLayout;
     private final PublishSubject<T> onClickSubject = PublishSubject.create();
+    private final PublishSubject<T> onLongClickSubject = PublishSubject.create();
     private ViewHolderProducer<T> viewHolderProducer;
 
     public ObjectListAdapter(int itemLayout, ViewHolderProducer<T> viewHolderProducer) {
@@ -35,7 +36,7 @@ public class ObjectListAdapter<T> extends RecyclerView.Adapter<BaseHolder<T>> {
 
     @Override
     public void onBindViewHolder(BaseHolder<T> holder, int position) {
-        holder.getViewHolderBinder().onBind(holder,items.get(position),onClickSubject);
+        holder.getViewHolderBinder().onBind(holder,items.get(position),onClickSubject,onLongClickSubject);
     }
 
     @Override
@@ -65,7 +66,9 @@ public class ObjectListAdapter<T> extends RecyclerView.Adapter<BaseHolder<T>> {
         notifyItemRemoved(position);
     }
 
-    public Observable<T> getPositionClicks(){
+    public Observable<T> onClick(){
         return onClickSubject.asObservable();
     }
+
+    public Observable<T> onLongClick() {return onLongClickSubject.asObservable();};
 }

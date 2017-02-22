@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.Profile;
 
@@ -92,13 +93,20 @@ public class SearchFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        seriesListAdapter.getPositionClicks().subscribe(s->{
+        seriesListAdapter.onClick().subscribe(s->{
             ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
             profileData.getSavedShows().add(s.getId());
             profileService.save(profileData);
             Intent intent = new Intent(getActivity(),SeriesActivity.class);
             intent.putExtra(getString(R.string.show_id),s.getId());
             getActivity().startActivity(intent);
+        });
+
+        seriesListAdapter.onLongClick().subscribe(s->{
+            ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
+            profileData.getSavedShows().add(s.getId());
+            profileService.save(profileData);
+            Toast.makeText(getContext(),s.getName()+" added to from collection.",Toast.LENGTH_SHORT).show();
         });
 
         return rootView;

@@ -23,7 +23,6 @@ import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.EpisodeViewHolder;
-import mgrzeszczak.com.github.seriesgeek.view.holders.SeasonViewHolder;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -75,7 +74,7 @@ public class SeasonActivity extends BaseActivity{
         });
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        episodeListAdapter.getPositionClicks().subscribe(e->{
+        episodeListAdapter.onClick().subscribe(e->{
             Intent intent = new Intent(this,EpisodeActivity.class);
             intent.putExtra(getString(R.string.show_id),showId);
             intent.putExtra(getString(R.string.season_id),seasonId);

@@ -7,6 +7,6 @@ import rx.subjects.PublishSubject;
  */
 public interface ViewHolderBinder<T> {
 
-    void onBind(BaseHolder holder, T item, PublishSubject<T> publishSubject);
+    void onBind(BaseHolder holder, T item, PublishSubject<T> onClick, PublishSubject<T> onLongClick);
 
 }

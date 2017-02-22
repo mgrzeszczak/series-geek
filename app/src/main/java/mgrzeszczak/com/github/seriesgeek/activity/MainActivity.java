@@ -2,36 +2,32 @@ package mgrzeszczak.com.github.seriesgeek.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
-import mgrzeszczak.com.github.seriesgeek.fragment.CardFragment;
 import mgrzeszczak.com.github.seriesgeek.fragment.SearchFragment;
 import mgrzeszczak.com.github.seriesgeek.fragment.SeriesFragment;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.ProfileData;
-import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
@@ -104,12 +100,17 @@ public class MainActivity extends BaseActivity {
 
         menu.findItem(R.id.menu_logout).setOnMenuItemClickListener(menuItem -> {
             logService.log("Logout");
+            LoginManager.getInstance().logOut();
+
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         });
-        menu.findItem(R.id.menu_logout).setOnMenuItemClickListener(menuItem -> {
+        /*menu.findItem(R.id.action_settings).setOnMenuItemClickListener(menuItem -> {
             logService.log("Settings");
             return true;
-        });
+        });*/
 
         return true;
     }

@@ -31,12 +31,16 @@ public class SeriesViewHolder extends BaseHolder<Series> {
 
     @Override
     public ViewHolderBinder<Series> getViewHolderBinder() {
-        return (BaseHolder holder, Series item, PublishSubject<Series> publishSubject)->{
+        return (BaseHolder holder, Series item, PublishSubject<Series> onClick, PublishSubject<Series> onLongClick)->{
             name.setText(item.getName());
             if (item.getImage()!=null && item.getImage().getMedium()!=null)
                 Picasso.with(poster.getContext()).load(item.getImage().getMedium()).into(poster);
             getItemView().setTag(item);
-            getItemView().setOnClickListener(v -> publishSubject.onNext(item));
+            getItemView().setOnClickListener(v -> onClick.onNext(item));
+            getItemView().setOnLongClickListener(v -> {
+                onLongClick.onNext(item);
+                return true;
+            });
         };
     }
 }

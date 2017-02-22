@@ -32,12 +32,16 @@ public class SeasonViewHolder extends BaseHolder<Season> {
 
     @Override
     public ViewHolderBinder<Season> getViewHolderBinder() {
-        return (BaseHolder holder, Season item, PublishSubject<Season> publishSubject)->{
+        return (BaseHolder holder, Season item, PublishSubject<Season> onClick, PublishSubject<Season> onLongClick)->{
             name.setText("Season "+item.getNumber());
             if (item.getImage()!=null && item.getImage().getMedium()!=null)
                 Picasso.with(poster.getContext()).load(item.getImage().getMedium()).into(poster);
             getItemView().setTag(item);
-            getItemView().setOnClickListener(v -> publishSubject.onNext(item));
+            getItemView().setOnClickListener(v -> onClick.onNext(item));
+            getItemView().setOnLongClickListener(v -> {
+                onLongClick.onNext(item);
+                return true;
+            });
         };
     }
 }

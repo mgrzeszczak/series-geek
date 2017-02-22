@@ -54,8 +54,17 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (AccessToken.getCurrentAccessToken()!=null) {
+        if (AccessToken.getCurrentAccessToken()!=null && Profile.getCurrentProfile() != null) {
             checkStoragePermissionsAndRun();
+        } else if (AccessToken.getCurrentAccessToken()!=null && Profile.getCurrentProfile() == null){
+            ProfileTracker profileTracker = new ProfileTracker() {
+                @Override
+                protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                    this.stopTracking();
+                    checkStoragePermissionsAndRun();
+                }
+            };
+            profileTracker.startTracking();
         } else login();
     }
 
@@ -92,13 +101,7 @@ public class LoginActivity extends BaseActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                ProfileTracker profileTracker = new ProfileTracker() {
-                    @Override
-                    protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-                        this.stopTracking();
-                    }
-                };
-                profileTracker.startTracking();
+
             }
 
             @Override

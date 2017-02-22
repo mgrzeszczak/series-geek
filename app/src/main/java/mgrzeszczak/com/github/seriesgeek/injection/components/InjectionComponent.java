@@ -7,10 +7,8 @@ import mgrzeszczak.com.github.seriesgeek.activity.LoginActivity;
 import mgrzeszczak.com.github.seriesgeek.activity.MainActivity;
 import mgrzeszczak.com.github.seriesgeek.activity.SeasonActivity;
 import mgrzeszczak.com.github.seriesgeek.activity.SeriesActivity;
-import mgrzeszczak.com.github.seriesgeek.fragment.CardFragment;
 import mgrzeszczak.com.github.seriesgeek.fragment.SearchFragment;
 import mgrzeszczak.com.github.seriesgeek.fragment.SeriesFragment;
-import mgrzeszczak.com.github.seriesgeek.model.api.Episode;
 
 /**
  * Created by maciek on 20.01.17.

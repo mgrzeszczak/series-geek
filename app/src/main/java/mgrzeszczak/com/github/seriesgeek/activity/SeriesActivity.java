@@ -18,12 +18,10 @@ import butterknife.ButterKnife;
 import mgrzeszczak.com.github.seriesgeek.R;
 import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.api.Season;
-import mgrzeszczak.com.github.seriesgeek.model.api.Series;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.SeasonViewHolder;
-import mgrzeszczak.com.github.seriesgeek.view.holders.SeriesViewHolder;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -74,7 +72,7 @@ public class SeriesActivity extends BaseActivity {
         });
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        seasonListAdapter.getPositionClicks().subscribe(s->{
+        seasonListAdapter.onClick().subscribe(s->{
             Intent intent = new Intent(this,SeasonActivity.class);
             intent.putExtra(getString(R.string.show_id),showId);
             intent.putExtra(getString(R.string.season_id),s.getId());
