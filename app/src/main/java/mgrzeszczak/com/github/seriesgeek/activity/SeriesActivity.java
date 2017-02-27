@@ -20,6 +20,7 @@ import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.api.Season;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
+import mgrzeszczak.com.github.seriesgeek.util.StringFormatter;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.SeasonViewHolder;
 import rx.android.schedulers.AndroidSchedulers;
@@ -59,7 +60,7 @@ public class SeriesActivity extends BaseActivity {
     }
 
     private void init(){
-        seasonListAdapter = new ObjectListAdapter<>(R.layout.item_series, SeasonViewHolder::new);
+        seasonListAdapter = new ObjectListAdapter<>(R.layout.item_season, SeasonViewHolder::new);
         recyclerView.setHasFixedSize(true);
         //recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(seasonListAdapter);
@@ -84,7 +85,7 @@ public class SeriesActivity extends BaseActivity {
         showId = getIntent().getIntExtra(getString(R.string.show_id),0);
         apiService.getSeriesInfo(showId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(series->{
             name.setText(series.getName());
-            description.setText(series.getSummary());
+            description.setText(StringFormatter.removeHtmlTags(series.getSummary()));
             if (series.getImage()!=null && series.getImage().getOriginal()!=null)
                 Picasso.with(poster.getContext()).load(series.getImage().getOriginal()).into(poster);
         });

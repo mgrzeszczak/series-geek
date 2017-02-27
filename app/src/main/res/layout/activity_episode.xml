@@ -25,7 +25,8 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="300dp"
+                    android:minHeight="150dp"
+                    android:maxHeight="150dp"
                     android:scaleType="centerCrop"
                     android:id="@+id/poster"/>
 
@@ -34,14 +35,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    style="@style/TitleText"/>
+                    style="@style/TitleTextNoBottomPadding"/>
+
+
+                <TextView
+                    android:padding="10dp"
+                    android:id="@+id/episodeNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:gravity="center" />
 
                 <TextView
                     android:padding="10dp"
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left" />
+                    android:gravity="start" />
+
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

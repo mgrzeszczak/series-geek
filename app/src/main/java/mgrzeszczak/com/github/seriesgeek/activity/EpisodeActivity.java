@@ -18,6 +18,7 @@ import mgrzeszczak.com.github.seriesgeek.injection.Injector;
 import mgrzeszczak.com.github.seriesgeek.model.api.Episode;
 import mgrzeszczak.com.github.seriesgeek.service.ApiService;
 import mgrzeszczak.com.github.seriesgeek.service.ProfileService;
+import mgrzeszczak.com.github.seriesgeek.util.StringFormatter;
 import mgrzeszczak.com.github.seriesgeek.view.adapter.ObjectListAdapter;
 import mgrzeszczak.com.github.seriesgeek.view.holders.EpisodeViewHolder;
 import rx.android.schedulers.AndroidSchedulers;
@@ -36,6 +37,8 @@ public class EpisodeActivity extends BaseActivity {
     TextView name;
     @BindView(R.id.description)
     TextView description;
+    @BindView(R.id.episodeNumber)
+    TextView episodeNumber;
 
     @Inject
     ApiService apiService;
@@ -59,7 +62,8 @@ public class EpisodeActivity extends BaseActivity {
         int showId = getIntent().getIntExtra(getString(R.string.show_id),0);
         apiService.getEpisode(episodeId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(episode->{
             name.setText(episode.getName());
-            description.setText(episode.getSummary());
+            episodeNumber.setText(String.format("S%02dE%02d", episode.getSeason(),episode.getNumber()));
+            description.setText(StringFormatter.removeHtmlTags(episode.getSummary()));
             if (episode.getImage()!=null && episode.getImage().getOriginal()!=null)
                 Picasso.with(poster.getContext()).load(episode.getImage().getOriginal()).into(poster);
         });

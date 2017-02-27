@@ -94,9 +94,9 @@ public class SearchFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         seriesListAdapter.onClick().subscribe(s->{
-            ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
+            /*ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
             profileData.getSavedShows().add(s.getId());
-            profileService.save(profileData);
+            profileService.save(profileData);*/
             Intent intent = new Intent(getActivity(),SeriesActivity.class);
             intent.putExtra(getString(R.string.show_id),s.getId());
             getActivity().startActivity(intent);
