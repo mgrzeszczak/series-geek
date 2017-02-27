@@ -122,7 +122,7 @@ public class SeriesFragment extends Fragment {
             profileData.getSavedShows().remove(s.getId());
             profileService.save(profileData);
             seriesListAdapter.remove(s);
-            Toast.makeText(getContext(),s.getName()+" removed from collection.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),s.getName()+" removed from your collection.",Toast.LENGTH_SHORT).show();
         });
 
         updateSubject.onNext(null);

@@ -104,9 +104,13 @@ public class SearchFragment extends Fragment {
 
         seriesListAdapter.onLongClick().subscribe(s->{
             ProfileData profileData = profileService.get(Profile.getCurrentProfile().getId());
+            if (profileData.getSavedShows().contains(s.getId())){
+                Toast.makeText(getContext(),s.getName()+" is already in your collection.",Toast.LENGTH_SHORT).show();
+                return;
+            }
             profileData.getSavedShows().add(s.getId());
             profileService.save(profileData);
-            Toast.makeText(getContext(),s.getName()+" added to from collection.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),s.getName()+" added to your collection.",Toast.LENGTH_SHORT).show();
         });
 
         return rootView;
