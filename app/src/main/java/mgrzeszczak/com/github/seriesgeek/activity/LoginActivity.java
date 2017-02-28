@@ -134,7 +134,7 @@ public class LoginActivity extends BaseActivity {
                     loadSettings(Profile.getCurrentProfile());
                     run();
                 } else {
-                    logService.log("NOT ALLOWED");
+                    Toast.makeText(LoginActivity.this, R.string.no_file_permissions,Toast.LENGTH_SHORT).show();
                     run();
                 }
             }

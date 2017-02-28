@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -48,6 +49,8 @@ public class SeriesFragment extends Fragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.info)
+    TextView info;
     @Inject
     ApiService apiService;
     @Inject
@@ -69,6 +72,14 @@ public class SeriesFragment extends Fragment {
     private final Object lock = new Object();
 
     public void update(ProfileData profileData){
+        if (info!=null){
+            if (profileData.getSavedShows().isEmpty()) {
+                info.setVisibility(View.VISIBLE);
+                info.setText(R.string.no_series_info);
+            } else {
+                info.setVisibility(View.GONE);
+            }
+        }
         synchronized(lock){
             if (seriesListAdapter!=null){
                 for (Subscription s : subscriptions) if (!s.isUnsubscribed()) s.unsubscribe();
@@ -123,9 +134,15 @@ public class SeriesFragment extends Fragment {
             profileService.save(profileData);
             seriesListAdapter.remove(s);
             Toast.makeText(getContext(),s.getName()+" removed from your collection.",Toast.LENGTH_SHORT).show();
+
+            if (seriesListAdapter.getItemCount()==0){
+                info.setVisibility(View.VISIBLE);
+                info.setText(R.string.no_series_info);
+            }
         });
 
         updateSubject.onNext(null);
+
         return rootView;
     }
 

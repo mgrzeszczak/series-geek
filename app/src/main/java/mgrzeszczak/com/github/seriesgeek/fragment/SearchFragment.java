@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -42,7 +43,8 @@ public class SearchFragment extends Fragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-
+    @BindView(R.id.info)
+    TextView info;
     @Inject
     ApiService apiService;
     @Inject
@@ -62,10 +64,21 @@ public class SearchFragment extends Fragment {
     }
 
     public void search(String query){
+        if (apiService == null) {
+            Injector.INSTANCE.getApplicationComponent().inject(this);
+        }
         apiService.searchSeries(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result->{
             synchronized(lock){
                 seriesListAdapter.clear();
                 for (SeriesSearchEntity entity : result) seriesListAdapter.add(entity.getSeries());
+                if (info!=null){
+                    if (seriesListAdapter!=null && seriesListAdapter.getItemCount()==0) {
+                        info.setVisibility(View.VISIBLE);
+                        info.setText(R.string.no_series_found);
+                    } else {
+                        info.setVisibility(View.GONE);
+                    }
+                }
             }
         });
     }
@@ -112,6 +125,12 @@ public class SearchFragment extends Fragment {
             profileService.save(profileData);
             Toast.makeText(getContext(),s.getName()+" added to your collection.",Toast.LENGTH_SHORT).show();
         });
+
+        if (info!=null){
+            info.setVisibility(View.VISIBLE);
+            info.setText(R.string.no_series_found);
+        }
+
 
         return rootView;
     }

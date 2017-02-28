@@ -38,7 +38,10 @@ public class ProfileService {
 
     public ProfileData get(String profileId){
         if (profiles.containsKey(profileId)) return profiles.get(profileId);
-        else return null;
+        else {
+            profiles.put(profileId,new ProfileData(profileId));
+            return profiles.get(profileId);
+        }
     }
 
     public void save(ProfileData profile){

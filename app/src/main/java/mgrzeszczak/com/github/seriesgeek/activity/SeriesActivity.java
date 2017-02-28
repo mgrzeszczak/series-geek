@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,7 +40,7 @@ public class SeriesActivity extends BaseActivity {
     @BindView(R.id.name)
     TextView name;
     @BindView(R.id.description)
-    TextView description;
+    WebView description;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -60,6 +62,10 @@ public class SeriesActivity extends BaseActivity {
     }
 
     private void init(){
+        if (getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         seasonListAdapter = new ObjectListAdapter<>(R.layout.item_season, SeasonViewHolder::new);
         recyclerView.setHasFixedSize(true);
         //recyclerView.setNestedScrollingEnabled(false);
@@ -85,7 +91,8 @@ public class SeriesActivity extends BaseActivity {
         showId = getIntent().getIntExtra(getString(R.string.show_id),0);
         apiService.getSeriesInfo(showId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(series->{
             name.setText(series.getName());
-            description.setText(StringFormatter.removeHtmlTags(series.getSummary()));
+            description.loadData(series.getSummary(),"text/html","UTF-8");
+            //description.setText(StringFormatter.removeHtmlTags(series.getSummary()));
             if (series.getImage()!=null && series.getImage().getOriginal()!=null)
                 Picasso.with(poster.getContext()).load(series.getImage().getOriginal()).into(poster);
         });
@@ -102,5 +109,17 @@ public class SeriesActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

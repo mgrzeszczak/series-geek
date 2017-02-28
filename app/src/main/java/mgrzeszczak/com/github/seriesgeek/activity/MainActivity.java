@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
         pager.setAdapter(pagerAdapter);
         tabs.setViewPager(pager);
         profileData = profileService.get(Profile.getCurrentProfile().getId());
-        myShowsFragment.updateEvent().subscribe((v)->myShowsFragment.update(profileData));
+//        myShowsFragment.updateEvent().subscribe((v)->myShowsFragment.update(profileData));
     }
 
     @Override

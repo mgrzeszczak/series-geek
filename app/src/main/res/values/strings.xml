@@ -9,6 +9,9 @@
     <string name="imdb_id">imdb_id</string>
     <string name="season_id">season_id</string>
     <string name="episode_id">episode_is</string>
+    <string name="no_series_info">You have no series in your collection.</string>
+    <string name="no_series_found">No series found.</string>
+    <string name="no_file_permissions">You won\'t be able to save your series.</string>
 
 
 </resources>
